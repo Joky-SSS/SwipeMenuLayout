@@ -180,7 +180,6 @@ public class SwipeMenuLayout extends ViewGroup {
             //令每一个子View可点击，从而获取触摸事件
             childView.setClickable(true);
             if (childView.getVisibility() != GONE) {
-                //后续计划加入上滑、下滑，则将不再支持Item的margin
                 measureChild(childView, widthMeasureSpec, heightMeasureSpec);
                 final MarginLayoutParams lp = (MarginLayoutParams) childView.getLayoutParams();
                 mHeight = Math.max(mHeight, childView.getMeasuredHeight()/* + lp.topMargin + lp.bottomMargin*/);
@@ -292,11 +291,11 @@ public class SwipeMenuLayout extends ViewGroup {
                     break;
                 case MotionEvent.ACTION_UP:
                 case MotionEvent.ACTION_CANCEL:
-                    //2016 11 03 add,判断手指起始落点，如果距离属于滑动了，就屏蔽一切点击事件。
+                    //判断手指起始落点，如果距离属于滑动了，就屏蔽一切点击事件。
                     if (Math.abs(ev.getRawX() - mFirstP.x) > mScaleTouchSlop) {
                         isUserSwiped = true;
                     }
-                    //add by 2016 09 11 ，IOS模式开启的话，且当前有侧滑菜单的View，且不是自己的，就该拦截事件咯。滑动也不该出现
+                    //IOS模式开启的话，且当前有侧滑菜单的View，且不是自己的，就该拦截事件咯。滑动也不该出现
                     if (!iosInterceptFlag && hasConsume) {//且滑动了 才判断是否要收起、展开menu
 //                        Log.e(TAG, "dispatchTouchEvent() " + MotionEvent.actionToString(ev.getAction()) + ",--------");
                         //求伪瞬时速度
@@ -443,7 +442,7 @@ public class SwipeMenuLayout extends ViewGroup {
                     if (Math.abs(gap) > 10 || Math.abs(getScrollX()) > 10) {//2016 09 29 修改此处，使屏蔽父布局滑动更加灵敏，
                         getParent().requestDisallowInterceptTouchEvent(true);
                     }
-                    //2016 10 22 add , 仿QQ，侧滑菜单展开时，点击内容区域，关闭侧滑菜单。begin
+                    //仿QQ，侧滑菜单展开时，点击内容区域，关闭侧滑菜单。begin
                     if (Math.abs(gap) > mScaleTouchSlop) {
                         isUnMoved = false;
                     }
@@ -489,7 +488,7 @@ public class SwipeMenuLayout extends ViewGroup {
         //展开就加入ViewCache：
         mViewCache = SwipeMenuLayout.this;
 
-        //2016 11 13 add 侧滑菜单展开，屏蔽content长按
+        //侧滑菜单展开，屏蔽content长按
         if (null != mContentView) {
             mContentView.setLongClickable(false);
         }
