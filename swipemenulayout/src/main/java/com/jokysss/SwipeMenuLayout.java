@@ -15,7 +15,6 @@ import android.view.ViewGroup;
 
 import com.jokysss.swipemenulayout.R;
 
-
 public class SwipeMenuLayout extends ViewGroup {
     private static final String TAG = "SwipeMenuLayout";
 
@@ -64,7 +63,7 @@ public class SwipeMenuLayout extends ViewGroup {
     private boolean iosInterceptFlag;//IOS类型下，是否拦截事件的flag
 
     /**
-     * 20160929add 左滑右滑的开关,默认左滑打开菜单
+     * 左滑右滑的开关,默认左滑打开菜单
      */
     private boolean isLeftSwipe;
     private boolean hasConsume;
@@ -180,6 +179,7 @@ public class SwipeMenuLayout extends ViewGroup {
             //令每一个子View可点击，从而获取触摸事件
             childView.setClickable(true);
             if (childView.getVisibility() != GONE) {
+                //后续计划加入上滑、下滑，则将不再支持Item的margin
                 measureChild(childView, widthMeasureSpec, heightMeasureSpec);
                 final MarginLayoutParams lp = (MarginLayoutParams) childView.getLayoutParams();
                 mHeight = Math.max(mHeight, childView.getMeasuredHeight()/* + lp.topMargin + lp.bottomMargin*/);
@@ -262,9 +262,9 @@ public class SwipeMenuLayout extends ViewGroup {
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
-        if(isSwipeEnable){
+        if (isSwipeEnable) {
             acquireVelocityTracker(ev);
-            switch (ev.getAction()){
+            switch (ev.getAction()) {
                 case MotionEvent.ACTION_DOWN:
                     isUserSwiped = false;//判断手指起始落点，如果距离属于滑动了，就屏蔽一切点击事件。
                     isUnMoved = true;//仿QQ，侧滑菜单展开时，点击内容区域，关闭侧滑菜单。
@@ -280,7 +280,7 @@ public class SwipeMenuLayout extends ViewGroup {
                     //如果down，view和cacheview不一样，则立马让它还原。且把它置为null
                     if (mViewCache != null) {
                         if (mViewCache != this) {
-                            mViewCache.smoothClose(0);
+                            mViewCache.smoothClose();
                             iosInterceptFlag = isIos;//IOS模式开启的话，且当前有侧滑菜单的View，且不是自己的，就该拦截事件咯。
                         }
                         //只要有一个侧滑菜单处于打开状态， 就不给外层布局上下滑动了
@@ -291,74 +291,74 @@ public class SwipeMenuLayout extends ViewGroup {
                     break;
                 case MotionEvent.ACTION_UP:
                 case MotionEvent.ACTION_CANCEL:
-                    //判断手指起始落点，如果距离属于滑动了，就屏蔽一切点击事件。
+                    //2016 11 03 add,判断手指起始落点，如果距离属于滑动了，就屏蔽一切点击事件。
                     if (Math.abs(ev.getRawX() - mFirstP.x) > mScaleTouchSlop) {
                         isUserSwiped = true;
                     }
-                    //IOS模式开启的话，且当前有侧滑菜单的View，且不是自己的，就该拦截事件咯。滑动也不该出现
+                    //add by 2016 09 11 ，IOS模式开启的话，且当前有侧滑菜单的View，且不是自己的，就该拦截事件咯。滑动也不该出现
                     if (!iosInterceptFlag && hasConsume) {//且滑动了 才判断是否要收起、展开menu
-//                        Log.e(TAG, "dispatchTouchEvent() " + MotionEvent.actionToString(ev.getAction()) + ",--------");
+                        //                        Log.e(TAG, "dispatchTouchEvent() " + MotionEvent.actionToString(ev.getAction()) + ",--------");
                         //求伪瞬时速度
                         mVelocityTracker.computeCurrentVelocity(1000, mMaxVelocity);
                         float velocityX = mVelocityTracker.getXVelocity(mPointerId);
-//                        Log.e(TAG, "dispatchTouchEvent()  velocityX:"+velocityX+" --------");
+                        //                        Log.e(TAG, "dispatchTouchEvent()  velocityX:"+velocityX+" --------");
                         if (Math.abs(velocityX) > 1000) {//滑动速度超过阈值
-//                            Log.e(TAG, "dispatchTouchEvent()  Math.abs(velocityX) > 1000 --------");
+                            //                            Log.e(TAG, "dispatchTouchEvent()  Math.abs(velocityX) > 1000 --------");
                             if (velocityX < -1000) {
                                 if (isLeftSwipe) {//左滑
                                     //平滑展开Menu
-                                    smoothExpand(Math.abs(velocityX));
+                                    smoothExpand();
 
                                 } else {
                                     //平滑关闭Menu
-                                    smoothClose(Math.abs(velocityX));
+                                    smoothClose();
                                 }
                             } else {
                                 if (isLeftSwipe) {//左滑
                                     // 平滑关闭Menu
-                                    smoothClose(Math.abs(velocityX));
+                                    smoothClose();
                                 } else {
                                     //平滑展开Menu
-                                    smoothExpand(Math.abs(velocityX));
+                                    smoothExpand();
                                 }
                             }
                         } else {
-//                            Log.e(TAG, "dispatchTouchEvent()  Math.abs(velocityX) < 1000 --------");
+                            //                            Log.e(TAG, "dispatchTouchEvent()  Math.abs(velocityX) < 1000 --------");
                             if (velocityX < 0) {
                                 if (isLeftSwipe) {//左滑
                                     //平滑展开Menu
-                                    smoothExpand(Math.abs(velocityX));
+                                    smoothExpand();
                                 } else {
                                     //平滑关闭Menu
-                                    smoothClose(Math.abs(velocityX));
+                                    smoothClose();
                                 }
-                            } else if(velocityX > 0){
+                            } else if (velocityX > 0) {
                                 if (isLeftSwipe) {//左滑
                                     // 平滑关闭Menu
-                                    smoothClose(Math.abs(velocityX));
+                                    smoothClose();
                                 } else {
                                     //平滑展开Menu
-                                    smoothExpand(Math.abs(velocityX));
+                                    smoothExpand();
                                 }
-                            }else if(velocityX == 0){
+                            } else if (velocityX == 0) {
                                 if (Math.abs(getScrollX()) > mLimit) {//否则就判断滑动距离
                                     //平滑展开Menu
-                                    smoothExpand(0);
+                                    smoothExpand();
                                 } else {
                                     // 平滑关闭Menu
-                                    smoothClose(0);
+                                    smoothClose();
                                 }
                             }
                         }
-                    }else{
-//                        Log.e(TAG, "dispatchTouchEvent() " + MotionEvent.actionToString(ev.getAction()) + ",........");
+                    } else {
+                        //                        Log.e(TAG, "dispatchTouchEvent() " + MotionEvent.actionToString(ev.getAction()) + ",........");
                         if (isLeftSwipe) {
                             if (getScrollX() > mScaleTouchSlop) {
                                 //这里判断落点在内容区域屏蔽点击，内容区域外，允许传递事件继续向下的的。。。
                                 if (ev.getX() < getWidth() - getScrollX()) {
                                     //仿QQ，侧滑菜单展开时，点击内容区域，关闭侧滑菜单。
                                     if (isUnMoved) {
-                                        smoothClose(0);
+                                        smoothClose();
                                     }
                                 }
                             }
@@ -367,7 +367,7 @@ public class SwipeMenuLayout extends ViewGroup {
                                 if (ev.getX() > -getScrollX()) {//点击范围在菜单外 屏蔽
                                     //仿QQ，侧滑菜单展开时，点击内容区域，关闭侧滑菜单。
                                     if (isUnMoved) {
-                                        smoothClose(0);
+                                        smoothClose();
                                     }
                                 }
                             }
@@ -380,16 +380,15 @@ public class SwipeMenuLayout extends ViewGroup {
                     break;
             }
         }
-        boolean superd = super.dispatchTouchEvent(ev);
-//        Log.e(TAG, "dispatchTouchEvent() " + MotionEvent.actionToString(ev.getAction()) + ",super:"+superd+",isTouching:"+isTouching);
-        return superd;
+        //        Log.e(TAG, "dispatchTouchEvent() " + MotionEvent.actionToString(ev.getAction()) + ",super:"+superd+",isTouching:"+isTouching);
+        return super.dispatchTouchEvent(ev);
     }
 
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
-//        Log.e(TAG, "onInterceptTouchEvent() " + MotionEvent.actionToString(ev.getAction()) + ",isTouching:"+isTouching);
+        //        Log.e(TAG, "onInterceptTouchEvent() " + MotionEvent.actionToString(ev.getAction()) + ",isTouching:"+isTouching);
         //禁止侧滑时，点击事件不受干扰。
-        if (isSwipeEnable ) {
+        if (isSwipeEnable) {
             switch (ev.getAction()) {
                 case MotionEvent.ACTION_DOWN:
                     if (isLeftSwipe) {
@@ -421,14 +420,13 @@ public class SwipeMenuLayout extends ViewGroup {
                 return true;
             }
         }
-        boolean superd = super.onInterceptTouchEvent(ev);
-//        Log.e(TAG, "onInterceptTouchEvent() " + MotionEvent.actionToString(ev.getAction()) + ",super:"+superd+",isTouching:"+isTouching);
-        return superd;
+        //        Log.e(TAG, "onInterceptTouchEvent() " + MotionEvent.actionToString(ev.getAction()) + ",super:"+superd+",isTouching:"+isTouching);
+        return super.onInterceptTouchEvent(ev);
     }
 
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
-//        Log.e(TAG, "onTouchEvent() start " + MotionEvent.actionToString(ev.getAction()) + ",isTouching:"+isTouching);
+        //        Log.e(TAG, "onTouchEvent() start " + MotionEvent.actionToString(ev.getAction()) + ",isTouching:"+isTouching);
         if (isSwipeEnable) {
             switch (ev.getAction()) {
                 case MotionEvent.ACTION_MOVE:
@@ -442,7 +440,7 @@ public class SwipeMenuLayout extends ViewGroup {
                     if (Math.abs(gap) > 10 || Math.abs(getScrollX()) > 10) {//2016 09 29 修改此处，使屏蔽父布局滑动更加灵敏，
                         getParent().requestDisallowInterceptTouchEvent(true);
                     }
-                    //仿QQ，侧滑菜单展开时，点击内容区域，关闭侧滑菜单。begin
+                    //2016 10 22 add , 仿QQ，侧滑菜单展开时，点击内容区域，关闭侧滑菜单。begin
                     if (Math.abs(gap) > mScaleTouchSlop) {
                         isUnMoved = false;
                     }
@@ -469,10 +467,10 @@ public class SwipeMenuLayout extends ViewGroup {
                 default:
                     break;
             }
-//            Log.e(TAG, "onTouchEvent() end " + MotionEvent.actionToString(ev.getAction()) + ",isTouching:"+isTouching);
+            //            Log.e(TAG, "onTouchEvent() end " + MotionEvent.actionToString(ev.getAction()) + ",isTouching:"+isTouching);
             return true;
-        }else{
-//            Log.e(TAG, "onTouchEvent() super() " );
+        } else {
+            //            Log.e(TAG, "onTouchEvent() super() " );
             return super.onTouchEvent(ev);
         }
     }
@@ -484,11 +482,11 @@ public class SwipeMenuLayout extends ViewGroup {
 
     private boolean isExpand;//代表当前是否是展开状态
 
-    public void smoothExpand(float velocityX) {
+    public void smoothExpand() {
         //展开就加入ViewCache：
         mViewCache = SwipeMenuLayout.this;
 
-        //侧滑菜单展开，屏蔽content长按
+        //2016 11 13 add 侧滑菜单展开，屏蔽content长按
         if (null != mContentView) {
             mContentView.setLongClickable(false);
         }
@@ -508,13 +506,7 @@ public class SwipeMenuLayout extends ViewGroup {
                 isExpand = true;
             }
         });
-        int duration = 200;
-//        Log.e("smoothExpand","velocityX:"+velocityX);
-        if(velocityX != 0){
-            if(velocityX > maxSpeed) velocityX = maxSpeed;
-            if(velocityX < 300) velocityX = 300;
-            duration = (int)(Math.abs(scrollX)*500 / velocityX + 0.5F);
-        }
+        long duration = (long) ((mRightMenuWidths - Math.abs(scrollX)) * 1.0 / mRightMenuWidths * (getChildCount() - 1) * 100);
         mExpandAnim.setDuration(duration).start();
     }
 
@@ -533,7 +525,7 @@ public class SwipeMenuLayout extends ViewGroup {
     /**
      * 平滑关闭
      */
-    public void smoothClose(float velocityX) {
+    public void smoothClose() {
         mViewCache = null;
 
         //侧滑菜单展开，屏蔽content长按
@@ -557,15 +549,8 @@ public class SwipeMenuLayout extends ViewGroup {
 
             }
         });
-//        Log.e("smoothClose","velocityX:"+velocityX);
-        int duration = 200;
-        if(velocityX != 0){
-            if(velocityX > maxSpeed) velocityX = maxSpeed;
-            if(velocityX < 300) velocityX = 300;
-            duration = (int)(Math.abs(scrollX)*500 / velocityX + 0.5F);
-        }
+        long duration = (long) (Math.abs(scrollX) * 1.0 / mRightMenuWidths * (getChildCount() - 1) * 100);
         mCloseAnim.setDuration(duration).start();
-        //Log.d(TAG, "smoothClose() called with:getScrollX() " + getScrollX());
     }
 
 
@@ -601,7 +586,7 @@ public class SwipeMenuLayout extends ViewGroup {
     @Override
     protected void onDetachedFromWindow() {
         if (this == mViewCache) {
-            mViewCache.smoothClose(0);
+            mViewCache.smoothClose();
             mViewCache = null;
         }
         super.onDetachedFromWindow();
@@ -630,5 +615,4 @@ public class SwipeMenuLayout extends ViewGroup {
             mViewCache = null;
         }
     }
-
 }
