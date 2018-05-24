@@ -7,3 +7,4 @@
   具体使用可参照[SwipeDelMenuLayout](https://github.com/mcxtzhang/SwipeDelMenuLayout)
   
   TODO:和[SmartRefreshLayout](https://github.com/scwang90/SmartRefreshLayout)还是有冲突，菜单展开的时候可以下拉刷新
+  (有点头绪，没改完)
