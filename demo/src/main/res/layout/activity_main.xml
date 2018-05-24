@@ -5,8 +5,16 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.jokysss.MainActivity">
-    <ListView
-        android:id="@+id/listview"
+
+    <com.jokysss.SmartRefreshLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"></ListView>
+        android:layout_height="match_parent"
+        app:srlEnableRefresh="false"
+        app:srlEnableLoadMore="false">
+
+        <ListView
+            android:id="@+id/listview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"></ListView>
+    </com.jokysss.SmartRefreshLayout>
 </LinearLayout>

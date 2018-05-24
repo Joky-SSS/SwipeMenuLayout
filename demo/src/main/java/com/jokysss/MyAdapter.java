@@ -7,7 +7,6 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-
 import com.jokysss.swipemenulayoutdemo.R;
 
 import java.util.List;
@@ -49,7 +48,7 @@ public class MyAdapter extends BaseAdapter implements View.OnClickListener{
         text.setOnClickListener(this);
         convertView.findViewById(R.id.delete).setTag(position);
         convertView.findViewById(R.id.delete).setOnClickListener(this);
-        ((SwipeMenuLayout)convertView).quickClose();
+        ((SwipeMenuLayoutNew) convertView).quickClose();
         TextView num = convertView.findViewById(R.id.num);
         TipsView.create((Activity) parent.getContext()).attach(num);
         return convertView;

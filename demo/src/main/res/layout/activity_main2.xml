@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.jokysss.Main2Activity">
+
+    <com.jokysss.SwipeMenuLayoutNew
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="#dad5d5"
+        android:layout_centerVertical="true">
+
+        <RelativeLayout
+            android:onClick="onClick"
+            android:tag="content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/text"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="asdasd"
+                android:onClick="onClick"
+                android:tag="text"
+                android:gravity="center" />
+
+            <TextView
+                android:id="@+id/num"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/txt_random"
+                android:textColor="#FFFFFF"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="20dp"
+                android:text="9" />
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/delete"
+            android:layout_width="60dp"
+            android:layout_height="match_parent"
+            android:textColor="#FFFFFF"
+            android:background="#FF0000"
+            android:onClick="onClick"
+            android:tag="1"
+            android:text="删除"
+            android:gravity="center" />
+
+        <TextView
+            android:layout_width="60dp"
+            android:layout_height="match_parent"
+            android:textColor="#FFFFFF"
+            android:background="#FF0000"
+            android:onClick="onClick"
+            android:tag="2"
+            android:text="删除"
+            android:gravity="center" />
+
+        <TextView
+            android:layout_width="60dp"
+            android:layout_height="match_parent"
+            android:textColor="#FFFFFF"
+            android:background="#FF0000"
+            android:onClick="onClick"
+            android:tag="3"
+            android:text="删除"
+            android:gravity="center" />
+
+        <TextView
+            android:layout_width="60dp"
+            android:layout_height="match_parent"
+            android:textColor="#FFFFFF"
+            android:background="#FF0000"
+            android:onClick="onClick"
+            android:tag="4"
+            android:text="删除"
+            android:gravity="center" />
+    </com.jokysss.SwipeMenuLayoutNew>
+</RelativeLayout>
